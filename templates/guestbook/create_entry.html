@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Guestbook | Create Entry</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #6366F1;
+            --primary-hover: #4F46E5;
+            --secondary: #14B8A6;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --gray: #64748B;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+        }
+
+        /* Background pattern */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(20, 184, 166, 0.1) 0%, transparent 50%);
+        }
+
+        /* Floating elements */
+        .floating-elements {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .float-item {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.15;
+        }
+
+        .float-item:nth-child(1) {
+            background-color: var(--primary);
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            right: -50px;
+            animation: float-1 15s ease-in-out infinite alternate;
+        }
+
+        .float-item:nth-child(2) {
+            background-color: var(--secondary);
+            width: 300px;
+            height: 300px;
+            bottom: -50px;
+            left: -50px;
+            animation: float-2 18s ease-in-out infinite alternate;
+        }
+
+        @keyframes float-1 {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100px, 100px); }
+        }
+
+        @keyframes float-2 {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(100px, -50px); }
+        }
+
+        /* Header */
+        .navbar {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .narrow-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Card */
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            margin-bottom: 2rem;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(245, 247, 250, 0.5);
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            color: var(--dark);
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.85rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .d-none {
+            display: none;
+        }
+
+        /* User list */
+        .user-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border-radius: 0 0 8px 8px;
+            scroll-behavior: smooth;
+        }
+
+        .user-list::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .user-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .user-list::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .user-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.3);
+        }
+
+        .user-selectable {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-selectable:last-child {
+            border-bottom: none;
+        }
+
+        .user-selectable:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .user-selectable.selected {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .user-selectable .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .user-selectable .details {
+            flex: 1;
+        }
+
+        .user-selectable .username {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 0.25rem;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+            text-align: center;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        /* Page title */
+        .page-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .page-subtitle {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--gray);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .narrow-container {
+                padding: 1.5rem 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    <div class="floating-elements">
+        <div class="float-item"></div>
+        <div class="float-item"></div>
+    </div>
+
+    <header class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="#" class="brand">
+                    <i class="bi bi-hexagon-fill"></i>
+                    Nexus Guestbook
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="narrow-container">
+        <h1 class="page-title">Share Your Message</h1>
+        <p class="page-subtitle">Write a message and select recipients to add to your guestbook</p>
+        
+        <form id="guestbookForm" method="POST" action="/api/guestbook/create/">
+            {% csrf_token %}
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Your Message</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="content" class="form-label">What would you like to share?</label>
+                        <textarea name="content" id="content" class="form-control" placeholder="Type your message here..." required></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Select Recipients</h3>
+                    <span id="selectedCountBadge" class="badge d-none">0</span>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="userSearch" class="form-label">Search for people</label>
+                        <input type="text" name="q" id="userSearch" class="form-control" 
+                               placeholder="Search by name or username"
+                               value="{{ query }}"
+                               autocomplete="off">
+                    </div>
+                    
+                    <div id="userList" class="user-list">
+                        {% for user in users %}
+                        <div class="user-selectable" data-user-id="{{ user.id }}">
+                            <div class="avatar">{{ user.first_name|first|default:user.username|first|upper }}</div>
+                            <div class="details">
+                                <div class="name">
+                                    {% if user.first_name or user.last_name %}
+                                        {{ user.first_name }} {{ user.last_name }}
+                                    {% else %}
+                                        {{ user.username }}
+                                    {% endif %}
+                                </div>
+                                <div class="username">@{{ user.username }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div id="noUsersMessage" class="alert d-none">
+                        <i class="bi bi-info-circle me-2"></i> No users found matching your search.
+                    </div>
+                </div>
+            </div>
+            
+            <input type="hidden" name="selectedUsers" id="selectedUsersInput" value="">
+            
+            <button type="submit" class="btn btn-primary btn-block" id="sendEntryBtn">
+                <i class="bi bi-send me-2"></i> Send Message
+            </button>
+        </form>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('guestbookForm');
+        const userSearch = document.getElementById('userSearch');
+        const userList = document.getElementById('userList');
+        const noUsersMessage = document.getElementById('noUsersMessage');
+        const selectedUsersInput = document.getElementById('selectedUsersInput');
+        const selectedCountBadge = document.getElementById('selectedCountBadge');
+        const selectedUsers = new Set();
+
+        userList.addEventListener('click', function(event) {
+            const userItem = event.target.closest('.user-selectable');
+            if (!userItem) return;
+
+            const userId = userItem.dataset.userId;
+
+            if (selectedUsers.has(userId)) {
+                selectedUsers.delete(userId);
+                userItem.classList.remove('selected');
+            } else {
+                selectedUsers.add(userId);
+                userItem.classList.add('selected');
+            }
+
+            selectedUsersInput.value = Array.from(selectedUsers).join(',');
+
+            if (selectedUsers.size > 0) {
+                selectedCountBadge.textContent = selectedUsers.size;
+                selectedCountBadge.classList.remove('d-none');
+            } else {
+                selectedCountBadge.classList.add('d-none');
+            }
+        });
+
+        function debounce(func, delay) {
+            let timeoutId;
+            return function (...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+
+        const performSearch = debounce(function() {
+            const query = userSearch.value.trim();
+            
+            if (query.length < 1) {
+                fetch('{% url "create_entry" %}')
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        userList.innerHTML = doc.getElementById('userList').innerHTML;
+                        noUsersMessage.classList.add('d-none');
+                    });
+                return;
+            }
+
+            fetch(`{% url 'create_entry' %}?q=${encodeURIComponent(query)}`)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const searchResults = doc.getElementById('userList').innerHTML;
+                    
+                    if (searchResults.trim()) {
+                        userList.innerHTML = searchResults;
+                        noUsersMessage.classList.add('d-none');
+                    } else {
+                        userList.innerHTML = '';
+                        noUsersMessage.classList.remove('d-none');
+                    }
+                });
+        }, 300);
+
+        userSearch.addEventListener('input', performSearch);
+    });
+    </script>
+</body>
+</html>
